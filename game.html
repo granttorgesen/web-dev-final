@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wordle Clone with Keyboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tile {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #dcdcdc;
+      background-color: #fff;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 18px;
+      transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+      transform-origin: bottom;
+    }
+
+    .tile.flip {
+      transform: rotateX(90deg);
+    }
+
+    .tile.correct {
+      background-color: #6aaa64;
+      color: #fff;
+      border-color: #6aaa64;
+    }
+
+    .tile.misplaced {
+      background-color: #c9b458;
+      color: #fff;
+      border-color: #c9b458;
+    }
+
+    .tile.absent {
+      background-color: #787c7e;
+      color: #fff;
+      border-color: #787c7e;
+    }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+
+    .key {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #dcdcdc; /* Light gray for unguessed letters */
+      color: #000;
+      text-transform: uppercase;
+      font-weight: bold;
+      cursor: default;
+      user-select: none;
+    }
+
+    .key.correct {
+      background-color: #6aaa64;
+      color: #fff;
+    }
+
+    .key.misplaced {
+      background-color: #c9b458;
+      color: #fff;
+    }
+
+    .key.absent {
+      background-color: #787c7e;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+    <a href="scratchpage.html">Back to the bad website</a>
+  <h1>Wordle Clone</h1>
+  <div id="board" class="board"></div>
+  <div class="input-section">
+    <input type="text" id="guessInput" maxlength="5" placeholder="Enter a 5-letter word">
+    <button id="submitGuess">Submit</button>
+  </div>
+  <div id="keyboard" class="keyboard"></div>
+  <p id="message" class="message"></p>
+
+  <script>
+    const words = ["apple", "grape", "mango", "peach", "berry", "lemon", "melon", "olive", "plumb"]; // Random words
+    const wordToGuess = words[Math.floor(Math.random() * words.length)];
+    const maxGuesses = 6;
+
+    let currentGuessIndex = 0;
+
+    // Alphabet for the virtual keyboard
+    const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+
+    // Initialize the game board
+    const board = document.getElementById('board');
+    const message = document.getElementById('message');
+    const guessInput = document.getElementById('guessInput');
+    const submitGuess = document.getElementById('submitGuess');
+    const keyboard = document.getElementById('keyboard');
+
+    for (let i = 0; i < maxGuesses * 5; i++) {
+      const tile = document.createElement('div');
+      tile.classList.add('tile');
+      board.appendChild(tile);
+    }
+
+    // Initialize the virtual keyboard
+    const keys = {};
+    alphabet.forEach(letter => {
+      const key = document.createElement('div');
+      key.classList.add('key');
+      key.textContent = letter;
+      keys[letter] = key;
+      keyboard.appendChild(key);
+    });
+
+    // Function to reveal tiles with animation
+    function revealTiles(guess, startIndex) {
+      const tiles = board.children;
+
+      for (let i = 0; i < 5; i++) {
+        const tile = tiles[startIndex + i];
+        const letter = guess[i];
+        tile.textContent = letter;
+
+        setTimeout(() => {
+          tile.classList.add('flip');
+        }, i * 300);
+
+        setTimeout(() => {
+          tile.classList.remove('flip');
+          if (letter === wordToGuess[i]) {
+            tile.classList.add('correct');
+            keys[letter].classList.add('correct');
+          } else if (wordToGuess.includes(letter)) {
+            if (!keys[letter].classList.contains('correct')) {
+              tile.classList.add('misplaced');
+              keys[letter].classList.add('misplaced');
+            }
+          } else {
+            tile.classList.add('absent');
+            keys[letter].classList.add('absent');
+          }
+        }, i * 300 + 150);
+      }
+    }
+
+    // Handle guess submission
+    submitGuess.addEventListener('click', () => {
+      const guess = guessInput.value.toLowerCase().trim();
+
+      // Validate input
+      if (guess.length !== 5) {
+        message.textContent = "Guess must be a 5-letter word.";
+        return;
+      }
+
+      // Reveal the tiles with feedback
+      const startIndex = currentGuessIndex * 5;
+      revealTiles(guess, startIndex);
+
+      currentGuessIndex++;
+      guessInput.value = "";
+
+      // Check win or lose
+      if (guess === wordToGuess) {
+        setTimeout(() => {
+          message.textContent = "Congratulations! You guessed the word!";
+          guessInput.disabled = true;
+          submitGuess.disabled = true;
+        }, 1800);
+      } else if (currentGuessIndex === maxGuesses) {
+        setTimeout(() => {
+          message.textContent = `Game Over! The word was "${wordToGuess}".`;
+          guessInput.disabled = true;
+          submitGuess.disabled = true;
+        }, 1800);
+      }
+    });
+  </script>
+</body>
+</html>

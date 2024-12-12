@@ -1,0 +1,53 @@
+.container {
+    display: flex; /* Use Flexbox for layout */
+    align-items: center; /* Vertically center the list and image */
+  }
+
+ol {
+    margin-right: 0px; /* Add some space between the list and image */
+  }
+
+img {
+    max-width: 200px; /* Adjust image size */
+    height: auto;
+  }
+.center{
+    display: block;
+    margin-left: 200px; 
+    margin-right: auto;
+    width: 20%;
+   }
+   /* At least four style definitions (it is possible you will have many more than four styles)
+Styles that specify font color
+Styles that specify font family
+At least three divs for positioning and styling blocks of content in the HTML page */
+
+.letters{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.colors{color: maroon;}
+body {
+    background-color: lightblue;
+  }
+html {
+    scroll-behavior: smooth;
+  }  
+  .header {
+    background-color: #6aaa64;
+    padding: 20px;
+    text-align: center;
+  }
+  .links {
+    border-style: dotted;
+    color: blueviolet;
+    background-color: lavender;
+    padding: 15px;
+    text-align: center;
+  }
+  .right-float {
+    float: right;
+    width: 750px;
+    background-color: lightblue;
+    padding: 10px;
+    text-align: center;
+  }
